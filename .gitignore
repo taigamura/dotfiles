@@ -1,0 +1,2 @@
+# Backups the installer creates when replacing pre-existing files
+*.pre-dotfiles.*
