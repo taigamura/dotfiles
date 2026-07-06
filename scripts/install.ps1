@@ -1,6 +1,6 @@
-# install.ps1 — install dotfiles onto native Windows (PowerShell).
+# install.ps1 -- install dotfiles onto native Windows (PowerShell).
 #
-# Run once per machine (safe to re-run — idempotent):
+# Run once per machine (safe to re-run -- idempotent):
 #   cd $HOME\dotfiles
 #   .\scripts\install.ps1
 #
@@ -10,7 +10,7 @@
 #     Enable Developer Mode: Settings > Privacy & security > For developers.
 #
 # What it does (each step is conditional and skipped with a WARN if prerequisites
-# are missing — the installer never fails hard on missing tools):
+# are missing -- the installer never fails hard on missing tools):
 #
 #   1. Symlink .claude\AGENTS.md -> $HOME\AGENTS.md  (always)
 #   2. If Claude Code is installed ($HOME\.claude\ exists):
@@ -18,12 +18,12 @@
 #      b. Symlink each dir in .claude\skills\*\ -> $HOME\.claude\skills\<name>
 #
 # What it SKIPS on native Windows (unlike install.sh):
-#   - .tmux.conf         — tmux does not run on native Windows.
-#   - statusline-command.sh — bash script, will not execute on native Windows.
-#   - statusLine key merge into settings.json — would point at a broken script.
+#   - .tmux.conf              -- tmux does not run on native Windows.
+#   - statusline-command.sh   -- bash script, will not execute on native Windows.
+#   - statusLine key merge    -- would point at a broken script.
 #
 # If you run Claude Code inside WSL, use scripts/install.sh from within WSL
-# instead — this .ps1 is only for native Windows Claude Code installs.
+# instead -- this .ps1 is only for native Windows Claude Code installs.
 
 $ErrorActionPreference = 'Stop'
 
@@ -33,7 +33,7 @@ $ClaudeDir = Join-Path $HOME '.claude'
 function Write-Warn { param([string]$Message) Write-Host "WARN: $Message" -ForegroundColor Yellow }
 function Write-Info { param([string]$Message) Write-Host $Message }
 
-# Link-File — idempotent symlink helper. Backs up pre-existing non-symlink.
+# Link-File -- idempotent symlink helper. Backs up pre-existing non-symlink.
 function Link-File {
   param(
     [Parameter(Mandatory)][string]$Src,
@@ -55,7 +55,7 @@ function Link-File {
       Move-Item -Path $Dst -Destination $backup
       Write-Info "backed up existing $Dst -> $backup"
     } else {
-      # Existing symlink points elsewhere — remove it.
+      # Existing symlink points elsewhere -- remove it.
       Remove-Item -Path $Dst -Force
     }
   }
@@ -80,16 +80,16 @@ function Link-File {
 # 1. Cross-tool AGENTS.md (always applies).
 Link-File -Src (Join-Path $Repo '.claude\AGENTS.md') -Dst (Join-Path $HOME 'AGENTS.md')
 
-# tmux — not available on native Windows; skip with warning.
-Write-Warn "skipping .tmux.conf — tmux is not available on native Windows"
+# tmux -- not available on native Windows; skip with warning.
+Write-Warn "skipping .tmux.conf -- tmux is not available on native Windows"
 
-# 2. Claude Code-specific setup — only if ~\.claude\ exists.
+# 2. Claude Code-specific setup -- only if ~\.claude\ exists.
 if (Test-Path $ClaudeDir) {
   # 2a. CLAUDE.md points at same source file as ~\AGENTS.md.
   Link-File -Src (Join-Path $Repo '.claude\AGENTS.md') -Dst (Join-Path $ClaudeDir 'CLAUDE.md')
 
-  # 2b. Statusline — bash script, cannot run on native Windows. Skip with warning.
-  Write-Warn "skipping statusline-command.sh symlink — bash script will not run on native Windows"
+  # 2b. Statusline -- bash script, cannot run on native Windows. Skip with warning.
+  Write-Warn "skipping statusline-command.sh symlink -- bash script will not run on native Windows"
   Write-Warn "skipping statusLine merge into settings.json for the same reason"
 
   # 2c. Per-skill symlinks.
@@ -105,7 +105,7 @@ if (Test-Path $ClaudeDir) {
     }
   }
 } else {
-  Write-Warn "$ClaudeDir not found — Claude Code is not installed on this machine."
+  Write-Warn "$ClaudeDir not found -- Claude Code is not installed on this machine."
   Write-Warn "  Skipped: CLAUDE.md, skills."
   Write-Warn "  Install Claude Code and re-run this script to complete setup."
 }
